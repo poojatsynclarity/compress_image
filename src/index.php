@@ -6,8 +6,11 @@
 
 <?php
 if (isset($_POST['submit'])) {
- 
-    //allowed file types
+    compress_image();
+    
+}
+
+function compress_image(){
     $arr_file_types = ['image/png', 'image/gif', 'image/jpg', 'image/jpeg'];
  
     if (!(in_array($_FILES['image']['type'], $arr_file_types))) {
@@ -53,6 +56,5 @@ if (isset($_POST['submit'])) {
     curl_exec($ch);
     curl_close($ch);
     fclose($fp);
- 
     echo "File uploaded successfully.";
-}
+ }
