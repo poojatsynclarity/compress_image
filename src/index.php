@@ -1,4 +1,4 @@
-<?php namespace compress_image;?>
+
 <form method="post" enctype="multipart/form-data">
     <p><input type="file" name="image" accept="image/*" /></p>
     <input type="submit" name="submit" value="Submit">

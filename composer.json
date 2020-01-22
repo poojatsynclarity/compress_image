@@ -11,7 +11,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "compress_image\\": "src/" 
+            "": "src/" 
         }
     },
     "require": {}
