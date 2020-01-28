@@ -4,6 +4,11 @@
         {
             if  (in_array  ('curl', get_loaded_extensions())) 
             {
+                $ext = pathinfo($image_path, PATHINFO_EXTENSION);
+                $arr_file_types = ['png','jpg', 'jpeg'];
+                if (!(in_array($ext, $arr_file_types))) {
+                    die('Only image is allowed!');
+                }
                 // optimize image using reSmush.it
                 $file = $image_path;
                 $mime = mime_content_type($file);
