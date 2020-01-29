@@ -1,6 +1,7 @@
 <?php
     class Compress {
         public $flag = true;
+        public $size_flag = true;
         function compress_image($image_path) 
         {
             try
@@ -14,14 +15,11 @@
             catch (Exception $e) {
                 echo 'ErrorMessage: ' .$e->getMessage();
             }   
-        
             if (!$this->flag) {
                 return;
             }
-            
             $ext = pathinfo($image_path, PATHINFO_EXTENSION); 
             $arr_file_types = ['png','jpg', 'jpeg'];
-            
             try
             {
                 if (!(in_array($ext, $arr_file_types))) {
@@ -39,6 +37,22 @@
 
             // optimize image using reSmush.it
             $file = $image_path;
+            $size = filesize($image_path);
+            try
+            {
+                if(!($size < 5242880 ))
+                {
+                    $this->size_flag = false;
+                    throw new Exception("The image should be less than 5MB!");
+                }
+            }
+            catch (Exception $e) {
+                echo 'ErrorMessage: ' .$e->getMessage(), "\n";
+            }
+            if(!$this->size_flag)
+            {
+                return;
+            }
             $mime = mime_content_type($file);
             $info = pathinfo($file);
             $name = $info['basename'];
