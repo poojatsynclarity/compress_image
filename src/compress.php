@@ -8,7 +8,41 @@
             // Get image info 
             $imgInfo = getimagesize($source);
             $mime = $imgInfo['mime']; 
-            
+            $ext = pathinfo($source, PATHINFO_EXTENSION);
+            $arr_file_types = ['png','jpg', 'jpeg'];
+
+            try
+            {
+                if (!(in_array($ext, $arr_file_types))) {
+                    $this->flag = false;
+                    throw new Exception("Only image is allowed!");
+                }
+            }
+            catch (Exception $e) {
+                echo 'ErrorMessage: ' .$e->getMessage(), "\n";
+            }
+
+            if (!$this->flag) {
+                return;
+            }
+
+            $file = $source;
+            $size = filesize($source);
+            try
+            {
+                if(!($size < 5242880 ))
+                {
+                    $this->size_flag = false;
+                    throw new Exception("The image should be less than 5MB!");
+                }
+            }
+            catch (Exception $e) {
+                echo 'ErrorMessage: ' .$e->getMessage(), "\n";
+            }
+            if(!$this->size_flag)
+            {
+                return;
+            }
             // Create a new image from file 
             switch($mime){ 
                 case 'image/jpeg': 
@@ -17,9 +51,6 @@
                 case 'image/png': 
                     $image = imagecreatefrompng($source); 
                     break; 
-                case 'image/gif': 
-                    $image = imagecreatefromgif($source); 
-                    break; 
                 default: 
                     $image = imagecreatefromjpeg($source); 
             } 
@@ -27,7 +58,7 @@
             if(imagejpeg($image, $source, 92))
             {
                 echo "Image compressed Successfully!";
-            } 
+            }
         }
 
         function compress_image($image_path) 
