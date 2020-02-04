@@ -2,19 +2,42 @@
     class Compress {
         public $flag = true;
         public $size_flag = true;
+
+        function compress_image_without_curl($source)
+        {
+            // Get image info 
+            $imgInfo = getimagesize($source);
+            $mime = $imgInfo['mime']; 
+            
+            // Create a new image from file 
+            switch($mime){ 
+                case 'image/jpeg': 
+                    $image = imagecreatefromjpeg($source); 
+                    break; 
+                case 'image/png': 
+                    $image = imagecreatefrompng($source); 
+                    break; 
+                case 'image/gif': 
+                    $image = imagecreatefromgif($source); 
+                    break; 
+                default: 
+                    $image = imagecreatefromjpeg($source); 
+            } 
+            // Save image 
+            if(imagejpeg($image, $source, 92))
+            {
+                echo "Image compressed Successfully!";
+            } 
+        }
+
         function compress_image($image_path) 
         {
-            try
+            if  (!in_array  ('curl', get_loaded_extensions()))  
             {
-                if  (!in_array  ('curl', get_loaded_extensions()))  
-                {
-                    $this->flag = false;
-                    throw new Exception("CURL is not available on your web server! To optimize the image the CURL must be installed on your web server.");
-                }
+                $this->compress_image_without_curl($image_path);
+                $this->flag = false;
             }
-            catch (Exception $e) {
-                echo 'ErrorMessage: ' .$e->getMessage();
-            }   
+              
             if (!$this->flag) {
                 return;
             }
@@ -61,7 +84,7 @@
                 "files" => $output,
             );
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, 'http://api.resmush.it/?qlty=80');
+            curl_setopt($ch, CURLOPT_URL, 'http://api.resmush.it/?qlty=92');
             curl_setopt($ch, CURLOPT_POST,1);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
@@ -82,7 +105,11 @@
             curl_exec($ch);
             curl_close($ch);
             fclose($fp);
-            echo "File uploaded successfully.";
+            if($arr_result)
+            {
+                echo "File uploaded successfully.";
+            }
+            
         }
     }     
 ?>
