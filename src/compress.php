@@ -2,6 +2,7 @@
     class Compress {
         public $flag = true;
         public $size_flag = true;
+        public $file_flag = true;
 
         function compress_image_without_curl($source)
         {
@@ -28,6 +29,20 @@
 
         function compress_image($image_path) 
         {
+            try
+            {
+                if (!file_exists($image_path)) {
+                    $this->file_flag = false;
+                    throw new Exception("Image is not exist on disk!");
+                }
+            }
+            catch (Exception $e) {
+                echo 'ErrorMessage: ' .$e->getMessage(), "\n";
+            }
+            if (!$this->file_flag) {
+                return;
+            }
+
             $ext = pathinfo($image_path, PATHINFO_EXTENSION);
             $arr_file_types = ['png','jpg', 'jpeg'];
             try
@@ -40,7 +55,6 @@
             catch (Exception $e) {
                 echo 'ErrorMessage: ' .$e->getMessage(), "\n";
             }
-
             if (!$this->flag) {
                 return;
             }
@@ -66,8 +80,7 @@
             {
                 $this->compress_image_without_curl($image_path);
                 $this->flag = false;
-            }
-              
+            } 
             if (!$this->flag) {
                 return;
             }
