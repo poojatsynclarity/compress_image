@@ -8,41 +8,6 @@
             // Get image info 
             $imgInfo = getimagesize($source);
             $mime = $imgInfo['mime']; 
-            $ext = pathinfo($source, PATHINFO_EXTENSION);
-            $arr_file_types = ['png','jpg', 'jpeg'];
-
-            try
-            {
-                if (!(in_array($ext, $arr_file_types))) {
-                    $this->flag = false;
-                    throw new Exception("Only image is allowed!");
-                }
-            }
-            catch (Exception $e) {
-                echo 'ErrorMessage: ' .$e->getMessage(), "\n";
-            }
-
-            if (!$this->flag) {
-                return;
-            }
-
-            $file = $source;
-            $size = filesize($source);
-            try
-            {
-                if(!($size < 5242880 ))
-                {
-                    $this->size_flag = false;
-                    throw new Exception("The image should be less than 5MB!");
-                }
-            }
-            catch (Exception $e) {
-                echo 'ErrorMessage: ' .$e->getMessage(), "\n";
-            }
-            if(!$this->size_flag)
-            {
-                return;
-            }
             // Create a new image from file 
             switch($mime){ 
                 case 'image/jpeg': 
@@ -63,16 +28,7 @@
 
         function compress_image($image_path) 
         {
-            if  (!in_array  ('curl', get_loaded_extensions()))  
-            {
-                $this->compress_image_without_curl($image_path);
-                $this->flag = false;
-            }
-              
-            if (!$this->flag) {
-                return;
-            }
-            $ext = pathinfo($image_path, PATHINFO_EXTENSION); 
+            $ext = pathinfo($image_path, PATHINFO_EXTENSION);
             $arr_file_types = ['png','jpg', 'jpeg'];
             try
             {
@@ -84,13 +40,11 @@
             catch (Exception $e) {
                 echo 'ErrorMessage: ' .$e->getMessage(), "\n";
             }
-            
+
             if (!$this->flag) {
                 return;
             }
 
-            // optimize image using reSmush.it
-            $file = $image_path;
             $size = filesize($image_path);
             try
             {
@@ -107,6 +61,19 @@
             {
                 return;
             }
+
+            if  (!in_array  ('curl', get_loaded_extensions()))  
+            {
+                $this->compress_image_without_curl($image_path);
+                $this->flag = false;
+            }
+              
+            if (!$this->flag) {
+                return;
+            }
+            
+            // optimize image using reSmush.it
+            $file = $image_path;
             $mime = mime_content_type($file);
             $info = pathinfo($file);
             $name = $info['basename'];
